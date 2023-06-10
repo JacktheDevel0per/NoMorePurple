@@ -29,10 +29,17 @@ public class NoMorePurpleClientMod implements ClientModInitializer {
         AutoConfig.register(NoMorePurpleConfig.class, JanksonConfigSerializer::new);
         CONFIG = AutoConfig.getConfigHolder(NoMorePurpleConfig.class).getConfig();
 
-        // Register the "/glintcolor <color>" command
+        // Register the "/glintcolor <color|on|off>" command
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, registryAccess) -> {
             dispatcher.register(
                     ClientCommandManager.literal(COMMAND_ID)
+                            .then(ClientCommandManager.literal("off").executes(context -> {
+                                NoMorePurpleClientMod.CONFIG.enabled=false;
+                                return 1;
+                            })).then(ClientCommandManager.literal("on").executes(context -> {
+                                NoMorePurpleClientMod.CONFIG.enabled=true;
+                                return 1;
+                            }))
                             .then(ClientCommandManager.argument(COMMAND_ID, StringArgumentType.string())
                                 .suggests(new GlintColorSuggestionProvider())
                                 .executes(context -> {
@@ -65,8 +72,7 @@ public class NoMorePurpleClientMod implements ClientModInitializer {
                 "black",
                 "rainbow",
                 "light",
-                "none",
-                "off"
+                "none"
         };
     }
 
@@ -76,15 +82,13 @@ public class NoMorePurpleClientMod implements ClientModInitializer {
                 .filter(d -> d.getName().compareTo(confColor)==0)
                 .findFirst()
                 .map(DyeColor::getId)
-                .orElse(-1);
+                .orElse(10); //Default Purple
         if (confColor.compareTo("rainbow") == 0) {
             color = DyeColor.values().length;
         } else if (confColor.compareTo("light") == 0){
             color = DyeColor.values().length + 1;
         } else if (confColor.compareTo("none") == 0){
             color = DyeColor.values().length + 2;
-        } else if (confColor.compareTo("off") == 0){
-            color = -1;
         }
         return color;
     }
@@ -92,48 +96,43 @@ public class NoMorePurpleClientMod implements ClientModInitializer {
     @Environment(EnvType.CLIENT)
     public static RenderLayer getGlint() {
         int color = changeColor();
-        if (color == -1)
-            return RenderLayer.getGlint();
         return GlintRenderLayer.glintColor.get(color);
     }
 
     @Environment(EnvType.CLIENT)
     public static RenderLayer getEntityGlint() {
         int color = changeColor();
-        if (color == -1)
-            return RenderLayer.getEntityGlint();
         return GlintRenderLayer.entityGlintColor.get(color);
     }
 
     @Environment(EnvType.CLIENT)
     public static RenderLayer getGlintDirect() {
         int color = changeColor();
-        if (color == -1)
-            return RenderLayer.getDirectGlint();
         return GlintRenderLayer.glintDirectColor.get(color);
     }
 
     @Environment(EnvType.CLIENT)
     public static RenderLayer getEntityGlintDirect() {
         int color = changeColor();
-        if (color == -1)
-            return RenderLayer.getDirectEntityGlint();
         return GlintRenderLayer.entityGlintDirectColor.get(color);
     }
 
     @Environment(EnvType.CLIENT)
     public static RenderLayer getArmorGlint() {
         int color = changeColor();
-        if (color == -1)
-            return RenderLayer.getArmorGlint();
         return GlintRenderLayer.armorGlintColor.get(color);
     }
 
     @Environment(EnvType.CLIENT)
     public static RenderLayer getArmorEntityGlint() {
         int color = changeColor();
-        if (color == -1)
-            return RenderLayer.getArmorEntityGlint();
         return GlintRenderLayer.armorEntityGlintColor.get(color);
+    }
+
+
+    @Environment(EnvType.CLIENT)
+    public static RenderLayer getGlintTransluncent() {
+        int color = changeColor();
+        return GlintRenderLayer.translucentGlintColor.get(color);
     }
 }

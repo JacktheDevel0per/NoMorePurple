@@ -17,8 +17,13 @@ import it.unimi.dsi.fastutil.objects.Object2ObjectLinkedOpenHashMap;
 @Environment(EnvType.CLIENT)
 public class BufferBuilderStorageMixin {
 
-    @Inject(method = "assignBufferBuilder", at = @At("HEAD"))
+
+    @Inject(method = "method_22999",at=@At("TAIL"))
+    private void addGlintTypes(Object2ObjectLinkedOpenHashMap<RenderLayer, BufferBuilder> map, CallbackInfo ci) {
+        GlintRenderLayer.addGlintTypes(map);
+    }
+/*    @Inject(method = "assignBufferBuilder", at = @At("HEAD"))
     private static void addGlintTypes(Object2ObjectLinkedOpenHashMap<RenderLayer, BufferBuilder> mapBuildersIn, RenderLayer renderTypeIn, CallbackInfo callbackInfo) {
         GlintRenderLayer.addGlintTypes(mapBuildersIn);
-    }
+    }*/
 }

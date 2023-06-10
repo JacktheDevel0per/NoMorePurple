@@ -11,4 +11,9 @@ public class NoMorePurpleConfig implements ConfigData {
     @ConfigEntry.Gui.Tooltip()
     @Comment("Set the color of your client's glint.")
     public String glintColor = "red";
+
+
+    @ConfigEntry.Gui.Tooltip()
+    @Comment("Main Toggle for the mod, when disabled the mod's hooks are \"disabled\"")
+    public Boolean enabled = true;
 }
